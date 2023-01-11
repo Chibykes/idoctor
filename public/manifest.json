@@ -1,0 +1,17 @@
+{
+    "theme_color": "#f05252",
+    "background_color": "#000000",
+    "display": "standalone",
+    "scope": "/driver",
+    "start_url": "/driver",
+    "name": "iAmbulance Driver",
+    "short_name": "iAmbulance Driver",
+    "description": "",
+    "icons": [
+        {
+            "src": "/img/siren.png",
+            "type": "image/png",
+            "sizes": "256x256"
+        }
+    ]
+}
