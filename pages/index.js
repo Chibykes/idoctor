@@ -57,9 +57,11 @@ export default function Index(){
             <div className='p-8 grid grid-cols-1 lg:grid-cols-2 items-center bg-[url(/img/bg.jpg)] bg-cover bg-top min-h-[85vh]'>
 
                 <div className='space-y-12'>
-                    <div className="flex items-center font-bold gap-1">
-                        <GiMedicalThermometer className="text-white text-2xl" />
-                        <p className="text-xl text-white">iDoctor</p>
+                    <div className="flex items-center font-bold gap-3">
+                        <div className='relative w-8 h-8'>
+                            <Image src="/img/logo.png" fill style={{objectFit: 'contain'}} />
+                        </div>
+                        <p className="text-2xl text-white">iDoctor</p>
                     </div>
 
                     <p className='text-6xl lg:text-6xl text-white font-bold'> Speak with a doctor in real-time online </p>
