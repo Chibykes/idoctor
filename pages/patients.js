@@ -115,11 +115,11 @@ export default function Index(){
                         <RiCloseCircleFill onClick={() => setOpenChat(false)} className="text-white" />
                     </div>
 
-                    <div className='h-full flex flex-col p-2 space-y-1'>
+                    <div className='overflow-auto h-full flex flex-col p-2 space-y-1'>
                         {chat.map(({email, message}, index) => (
                             email === me.email ? 
-                            <div key={index} class="inline-block rounded-md text-xs p-2 bg-sky-500 text-white max-w-[49%] ml-auto">{message}</div>:
-                            <div key={index} class="inline-block rounded-md text-xs p-2 bg-neutral-100 max-w-[49%] mr-auto">{message}</div>
+                            <div key={index} class="break-words inline-block rounded-md text-xs p-2 bg-sky-500 text-white max-w-[49%] ml-auto">{message}</div>:
+                            <div key={index} class="break-words inline-block rounded-md text-xs p-2 bg-neutral-100 max-w-[49%] mr-auto">{message}</div>
                         ))}
                         
                         {typingPatients.find(({email}) => email === currentPatient.email) && <div className='inline-flex justify-center items-center pt-2 gap-1 max-w-[49%] mr-auto'>
