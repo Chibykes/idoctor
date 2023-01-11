@@ -12,76 +12,57 @@ const socket = io(process.env.NEXT_PUBLIC_SOCKET_URI);
 
 export default function Index(){
 
-    const [typingDoctors,  setTypingDoctors] = useState([]);
+    const [typingPatients,  setTypingPatients] = useState([]);
     const [chat, setChat] = useState([]);
     const [message, setMessage] = useState('');
     const [me, setMe] = useState({ 
-        email: 'user@idoctor.dev',
-        name: 'Chukwubuikem Chiabuotu'
+        email: 'doctor@idoctor.dev',
+        name: 'Dr. Chidi Mark MD'
     });
     const [openChat, setOpenChat] = useState(false);
-    const [currentDoctor, setCurrentDoctor] = useState({});
+    const [currentPatient, setCurrentPatient] = useState({});
     const router = useRouter();
 
-    const doctors = [
+    const patients = [
         {
-            img: "/img/benedict.jpg",
-            about: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa nihil consequatur dolor laborum neque doloremque iure perspiciatis aperiam adipisci architecto! Alias incidunt, libero delectus voluptatem dignissimos reprehenderit',
-            name: "Dr. Chidi Mark MD",
-            email: "doctor@idoctor.dev",
-            hospital: "City of Saints Hospital, Ikeja",
-            specs: ['General Consultancy', 'Ulcers', 'Gastrointestinal diseases', 'Abdominal Analysis']
-        },
-        // {
-        //     img: "/img/benedict.jpg",
-        //     about: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa nihil consequatur dolor laborum neque doloremque iure perspiciatis aperiam adipisci architecto! Alias incidunt, libero delectus voluptatem dignissimos reprehenderit',
-        //     name: "Dr. Benedict Ajuzie MD",
-        //     email: "doctor1@idoctor.dev",
-        //     hospital: "Glory Days Hospital",
-        //     specs: ['General Consultancy', 'Chest cavity', 'Lung related diseases']
-        // },
-        {
-            img: "/img/hisnu.jpg",
-            about: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa nihil consequatur dolor laborum neque doloremque iure perspiciatis aperiam adipisci architecto! Alias incidunt, libero delectus voluptatem dignissimos reprehenderit',
-            name: "Dr. Cleopatra Hisnu MD",
-            email: "doctor2@idoctor.dev",
-            hospital: "All Time Hospital, India",
-            specs: ['General Consultancy', 'Head Injuries', 'Psychotherapy']
+            img: "/img/chibykes.webp",
+            email: "user@idoctor.dev",
+            name: "Chukwubuikem Chiabuotu"
         },
     ]
 
-    const chatDoctor = ({img, name, email, hospital}) => {
-        setCurrentDoctor({img, name, email, hospital});
+    const chatPatient = ({img, name, email}) => {
+        setCurrentPatient({img, name, email});
         setChat([]);
         setOpenChat(true);
     }
 
     const sendMessage = () => {
-        const data = { ...me, for: currentDoctor.email, message };
+        const data = { ...me, for: currentPatient.email, message };
         socket.emit('send', data)
         setChat([...chat, data]);
         setMessage('');
     }
 
-    const emitTyping = () => socket.emit('typing', {...me, for: currentDoctor.email});
-    const emitNoTyping = () => socket.emit('no_typing', {...me, for: currentDoctor.email});
+    const emitTyping = () => socket.emit('typing', {...me, for: currentPatient.email});
+    const emitNoTyping = () => socket.emit('no_typing', {...me, for: currentPatient.email});
 
     socket.on('send', (data) => {
-        if((currentDoctor.email === data.email) && (me.email === data.for)){
+        if(currentPatient.email === data.email && me.email === data.for){
             setChat([...chat, data]);
-            setTypingDoctors(typingDoctors.filter(({email}) => email !== data.email));
+            setTypingPatients(typingPatients.filter(({email}) => email !== data.email));
         }
     });
-    
+
     socket.on('no_typing', (data) => {
-        if((currentDoctor.email === data.email) && (me.email === data.for)){
-            setTypingDoctors(typingDoctors.filter(({email}) => email !== data.email));
+        if(currentPatient.email === data.email && me.email === data.for){
+            setTypingPatients(typingPatients.filter(({email}) => email !== data.email));
         }
     });
-    
+
     socket.on('typing', (data) => {
-        if((currentDoctor.email === data.email) && (me.email === data.for)){
-            setTypingDoctors([...typingDoctors, data]);
+        if(currentPatient.email === data.email && me.email === data.for){
+            setTypingPatients([...typingPatients, data]);
         }
     })
 
@@ -89,11 +70,11 @@ export default function Index(){
         <main className="bg-neutral-100 space-y-6 ply-12 plx-8 mx-auto w-full min-h-screen overflow-auto">
 
             <div className='p-5 lg:p-12 space-y-12'>
-                <p className='w-2/3 mx-auto text-2xl text-center font-bold'>Take your health seriously. <br /> See list of our available doctors </p>
+                <p className='w-2/3 mx-auto text-2xl text-center font-bold'>Take your health seriously. <br /> See list of our available patients </p>
 
                 <div className='grid lg:grid-cols-3 gap-8'>
 
-                    {doctors.map(({img, about, name, email, specs, hospital},index) => (
+                    {patients.map(({img, email, name},index) => (
                         <div key={index} className='p-4 space-y-4 bg-neutral-200 rounded-lg self-baseline'>
                             <div className='flex items-center gap-4'>
                                 <div className='ring-4 ring-white relative w-16 h-16 rounded-full overflow-hidden'>
@@ -101,26 +82,11 @@ export default function Index(){
                                 </div>
                                 <div className=''>
                                     <p className='font-bold'>{name}</p>
-                                    <p className='text-sm text-sky-500'>{hospital}</p>
+                                    <p className='text-xs font-semibold text-sky-500'>{email}</p>
                                 </div>
                             </div>
 
-                            <div className=''>
-                                <p className='text-sm font-bold'>About</p>
-                                <p className='text-xs'>
-                                    {about}
-                                </p>
-
-                                <p className='mt-5'></p>
-                                <p className='text-sm font-bold'>Specializes:</p>
-                                <div className='flex flex-wrap gap-1'>
-                                    {specs.map((spec, index) => 
-                                        <p key={index} className='text-[.625rem] font-semibold rounded-full px-2 py-1 bg-white'>{spec}</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div onClick={() => chatDoctor({img, name, email, hospital})} className='lg:w-1/2 mx-auto flex justify-center gap-2 p-2 text-xs font-bold rounded-full bg-gradient-to-tr from-sky-400 to-sky-500 text-white'>
+                            <div onClick={() => chatPatient({img, name, email})} className='lg:w-1/2 mx-auto flex justify-center gap-2 p-2 text-xs font-bold rounded-full bg-gradient-to-tr from-sky-400 to-sky-500 text-white'>
                                 <BsFillChatSquareTextFill className="text-white text-lg" />
                                 Chat
                             </div>
@@ -139,11 +105,11 @@ export default function Index(){
 
                     <div className='flex items-center gap-4 bg-gradient-to-tr from-sky-400 to-sky-500 p-2'>
                         <div className='border-2 border-white relative w-12 h-12 rounded-full overflow-hidden'>
-                            <Image src={currentDoctor?.img} style={{objectFit: 'cover'}} fill/>
+                            <Image src={currentPatient?.img} style={{objectFit: 'cover'}} fill/>
                         </div>
                         <div className='text-white mr-auto'>
-                            <p className='font-bold text-sm'>{currentDoctor?.name}</p>
-                            <p className='text-xs'>{currentDoctor?.hospital}</p>
+                            <p className='font-bold text-sm'>{currentPatient?.name}</p>
+                            <p className='text-xs'>{currentPatient?.email}</p>
                         </div>
                         
                         <RiCloseCircleFill onClick={() => setOpenChat(false)} className="text-white" />
@@ -155,8 +121,8 @@ export default function Index(){
                             <div key={index} class="inline-block rounded-md text-xs p-2 bg-sky-500 text-white max-w-[49%] ml-auto">{message}</div>:
                             <div key={index} class="inline-block rounded-md text-xs p-2 bg-neutral-100 max-w-[49%] mr-auto">{message}</div>
                         ))}
-
-                        {typingDoctors.find(({email}) => email === currentDoctor.email) && <div className='inline-flex justify-center items-center pt-2 gap-1 max-w-[49%] mr-auto'>
+                        
+                        {typingPatients.find(({email}) => email === currentPatient.email) && <div className='inline-flex justify-center items-center pt-2 gap-1 max-w-[49%] mr-auto'>
                             <div style={{'--delay': 1}} className='rounded-full h-2 w-2 bg-neutral-400 loading'></div>
                             <div style={{'--delay': 2}} className='rounded-full h-2 w-2 bg-neutral-400 loading'></div>
                             <div style={{'--delay': 3}} className='rounded-full h-2 w-2 bg-neutral-400 loading'></div>
